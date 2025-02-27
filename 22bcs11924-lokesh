@@ -1,0 +1,206 @@
+Easy level:
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Employee {
+    int id;
+    String name;
+    double salary;
+
+    Employee(int id, String name, double salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id + ", Name: " + name + ", Salary: " + salary;
+    }
+}
+
+public class EmployeeManager {
+    private static ArrayList<Employee> employees = new ArrayList<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\nEmployee Management System");
+            System.out.println("1. Add Employee");
+            System.out.println("2. Update Employee");
+            System.out.println("3. Remove Employee");
+            System.out.println("4. Search Employee");
+            System.out.println("5. List All Employees");
+            System.out.println("6. Exit");
+            System.out.print("Choose an option: ");
+            int option = scanner.nextInt();
+            scanner.nextLine();  // Consume the newline character
+            
+            switch (option) {
+                case 1: addEmployee(); break;
+                case 2: updateEmployee(); break;
+                case 3: removeEmployee(); break;
+                case 4: searchEmployee(); break;
+                case 5: listEmployees(); break;
+                case 6: System.exit(0);
+                default: System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private static void addEmployee() {
+        System.out.print("Enter ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline character
+        System.out.print("Enter Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Salary: ");
+        double salary = scanner.nextDouble();
+        employees.add(new Employee(id, name, salary));
+        System.out.println("Employee added successfully.");
+    }
+
+    private static void updateEmployee() {
+        System.out.print("Enter Employee ID to update: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline character
+        for (Employee emp : employees) {
+            if (emp.id == id) {
+                System.out.print("Enter new Name: ");
+                emp.name = scanner.nextLine();
+                System.out.print("Enter new Salary: ");
+                emp.salary = scanner.nextDouble();
+                System.out.println("Employee updated successfully.");
+                return;
+            }
+        }
+        System.out.println("Employee not found.");
+    }
+
+    private static void removeEmployee() {
+        System.out.print("Enter Employee ID to remove: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline character
+        for (Employee emp : employees) {
+            if (emp.id == id) {
+                employees.remove(emp);
+                System.out.println("Employee removed successfully.");
+                return;
+            }
+        }
+        System.out.println("Employee not found.");
+    }
+
+    private static void searchEmployee() {
+        System.out.print("Enter Employee ID to search: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline character
+        for (Employee emp : employees) {
+            if (emp.id == id) {
+                System.out.println("Employee found: " + emp);
+                return;
+            }
+        }
+        System.out.println("Employee not found.");
+    }
+
+    private static void listEmployees() {
+        if (employees.isEmpty()) {
+            System.out.println("No employees found.");
+        } else {
+            System.out.println("List of Employees:");
+            for (Employee emp : employees) {
+                System.out.println(emp);
+            }
+        }
+    }
+}
+
+medium problem
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+class Card {
+    String symbol;
+    String number;
+
+    Card(String symbol, String number) {
+        this.symbol = symbol;
+        this.number = number;
+    }
+
+    @Override
+    public String toString() {
+        return "Card Number: " + number + ", Symbol: " + symbol;
+    }
+}
+
+public class CardCollection {
+    private static Map<String, ArrayList<Card>> cardCollection = new HashMap<>();
+
+    public static void main(String[] args) {
+        addCard(new Card("Hearts", "1"));
+        addCard(new Card("Hearts", "2"));
+        addCard(new Card("Spades", "1"));
+        addCard(new Card("Clubs", "3"));
+        
+        System.out.println("Search for cards of symbol 'Hearts':");
+        searchCardsBySymbol("Hearts");
+    }
+
+    public static void addCard(Card card) {
+        cardCollection.computeIfAbsent(card.symbol, k -> new ArrayList<>()).add(card);
+    }
+
+    public static void searchCardsBySymbol(String symbol) {
+        if (cardCollection.containsKey(symbol)) {
+            System.out.println("Cards with symbol " + symbol + ":");
+            for (Card card : cardCollection.get(symbol)) {
+                System.out.println(card);
+            }
+        } else {
+            System.out.println("No cards found for symbol: " + symbol);
+        }
+    }
+}
+Hard level:
+class TicketBookingSystem implements Runnable {
+    private static int availableSeats = 10;
+    private boolean isVIP;
+    
+    TicketBookingSystem(boolean isVIP) {
+        this.isVIP = isVIP;
+    }
+
+    @Override
+    public void run() {
+        synchronized (this) {
+            if (availableSeats > 0) {
+                availableSeats--;
+                System.out.println(Thread.currentThread().getName() + " booked a seat. Remaining seats: " + availableSeats);
+            } else {
+                System.out.println("No seats available for " + Thread.currentThread().getName());
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Thread vipBooking1 = new Thread(new TicketBookingSystem(true), "VIP Booking 1");
+        Thread vipBooking2 = new Thread(new TicketBookingSystem(true), "VIP Booking 2");
+        Thread regularBooking1 = new Thread(new TicketBookingSystem(false), "Regular Booking 1");
+        Thread regularBooking2 = new Thread(new TicketBookingSystem(false), "Regular Booking 2");
+
+        // Set thread priorities to simulate VIP booking priority
+        vipBooking1.setPriority(Thread.MAX_PRIORITY);
+        vipBooking2.setPriority(Thread.MAX_PRIORITY);
+        regularBooking1.setPriority(Thread.NORM_PRIORITY);
+        regularBooking2.setPriority(Thread.NORM_PRIORITY);
+
+        // Start threads
+        vipBooking1.start();
+        vipBooking2.start();
+        regularBooking1.start();
+        regularBooking2.start();
+    }
+}
